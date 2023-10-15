@@ -1,4 +1,5 @@
 export const characters = {
+    'characterProgression' : ["Lily", "John", "Aurelio", "Kai", "Sakura", "Rajesh", "Andres", "Amina"],
     'Lily': {
         'name': "Lily",
         'personality' : "Sassy, slightly rude, annoying, resistant, stubborn",

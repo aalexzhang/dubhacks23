@@ -18,7 +18,7 @@
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           messages: [
-            {role: "system", content: `${circumstance} ${circumstances["init"]} Your name is ${name}. You are ${personality}.`},
+            {role: "system", content: `${circumstance} ${circumstances["init"]} Your name (the assistant) is ${name}. You will display the following personality traits in your responses: ${personality}. Remember, never suggest solutions! `},
             ...chatState // Include the user's input here
           ],
           max_tokens: 100,
