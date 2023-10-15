@@ -6,8 +6,20 @@ import onSubmit from "./api/generate";
 import { characters } from "./api/characters";
 import Confetti from "react-confetti";
 import useWindowSize from "../hooks/util";
+import Image from 'next/image'
+import lily from '../public/lily.png'
+import john from '../public/john.png'
+import styles from "./index.module.css";
+// import aurelio from '../public/aurelio.png'
+// import kai from '../public/kai.png'
+// import sakura from '../public/sakura.png'
+// import rajesh from '../public/rajesh.png'
+// import andres from '../public/andres.png'
+// import amina from '../public/amina.png'
+
 
 export default function Home() {
+  const images = {"lily":lily, "john":john} //"aurelio":aurelio, "kai":kai, "sakura":sakura, "rajesh":rajesh, "andres":andres, "amina":amina}
   const [aiLoading, setaiLoading] = useState(false);
   const [inputText, setInputText] = useState("");
   const [chatState, setChatState] = useState([]);
@@ -16,8 +28,6 @@ export default function Home() {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [resolved, setResolved] = useState(false);
   const [talk, setTalk] = useState(false);
-
-  const size = useWindowSize();
 
   useEffect(() => {
     setCurrentScenarioIndex(0);
@@ -38,6 +48,7 @@ export default function Home() {
       var dummyChatState = [...chatState, { role: "user", content: "" }];
       setChatState(dummyChatState);
       console.log("chatState:" + chatState);
+      console.log(`../public/${currentName.toLowerCase()}.png`);
       const data = await onSubmit(
         dummyChatState,
         currentName,
@@ -173,9 +184,16 @@ export default function Home() {
                 <button onClick={startConversation}>Start Conversation</button>
               )}
             </div>
+
+
+            <div className="container">
+              <Image src={images[currentName.toLowerCase()]} className={styles.animated_element}/>
+            </div>
+
+
             <div
               className="p-4 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
-              style={{ height: "400px" }}
+              style={{ maxHeight: "400px" }}
             >
               <p className="title">Chat</p>
               <div
