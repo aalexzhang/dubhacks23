@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Head from "next/head";
 import { useState } from "react";
 import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
@@ -18,7 +18,7 @@ import logo from "../public/logo.png";
 
 export default function Home() {
   const images = {
-    "lily": lily,
+    lily: lily,
     john: john,
     aurelio: aurelio,
     kai: kai,
@@ -37,6 +37,7 @@ export default function Home() {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [resolved, setResolved] = useState(false);
   const [talk, setTalk] = useState(false);
+  const [beat, setBeat] = useState(false);
 
   useEffect(() => {
     setCurrentScenarioIndex(0);
@@ -118,6 +119,25 @@ export default function Home() {
     setaiLoading(false);
   };
 
+  const beatGame = () => {
+    setBeat(true);
+    setCurrentName(characters["characterProgression"][0]);
+    setTalk(true);
+    setResolved(false);
+    setChatState((state) => []);
+    setInputText("");
+  };
+
+  const nextLevel = () => {
+    if (
+      currentScenarioIndex + 1 === characters["characterProgression"].length
+    ) {
+      beatGame();
+    } else {
+      setCurrentScenarioIndex((i) => i + 1);
+    }
+  };
+
   useEffect(() => {
     const start = async () => {
       if (talk && currentName !== "" && chatState.length == 0 && !resolved) {
@@ -160,18 +180,32 @@ export default function Home() {
             </div>
             <section className="modal-card-body">
               <div className="content is-block">
-                <p>
-                Congrats! You solved {currentName}'s problem! You may now select
-                them on your contact book on the right and talk with them
-                </p>
-                <button className='button is-success is-pulled-right' onClick={() => setCurrentScenarioIndex((i) => i + 1)}>Close</button>
+                {currentScenarioIndex + 1 === characters["characterProgression"].length ? (
+                  <p>
+                    Very Impressive! By completing {currentName}'s problem, you
+                    finished all scenarios. You may now talk to all your friends
+                    freely!
+                  </p>
+                ) : (
+                  <p>
+                    Congrats! You solved {currentName}'s problem! You may now
+                    select them on your contact book on the right and talk with
+                    them
+                  </p>
+                )}
+                <button
+                  className="button is-success is-pulled-right"
+                  onClick={() => nextLevel()}
+                >
+                  Close
+                </button>
               </div>
             </section>
           </div>
           <button
             className="modal-close is-large"
             aria-label="close"
-            onClick={() => setCurrentScenarioIndex((i) => i + 1)}
+            onClick={() => nextLevel()}
           ></button>
         </div>
         <div className={`modal ${setup ? "is-active" : ""}`}>
@@ -231,7 +265,7 @@ export default function Home() {
                     </div>
                   </div>
                   {userName === "" && (
-                    <p className="help is-danger">This username is available</p>
+                    <p className="help is-danger">Provide your name</p>
                   )}
                 </form>
               </div>
@@ -253,7 +287,7 @@ export default function Home() {
             >
               <Image
                 src={logo}
-                alt="logo"
+                alt="Sprout logo"
                 fill
                 style={{ objectFit: "cover" }}
               />
@@ -266,33 +300,39 @@ export default function Home() {
           className="columns"
           style={{ maxHeight: "100%", overflow: "hidden" }}
         >
-          <aside className="column hero is-narrow" style={{backgroundColor: "#F9F9F9", borderRight: "1px solid #DEDEDE", width: 'auto'}}>
+          <aside
+            className="column hero is-narrow"
+            style={{
+              backgroundColor: "#F9F9F9",
+              borderRight: "1px solid #DEDEDE",
+              width: "auto",
+            }}
+          >
             <div className="container pt-4">
-              <div className='box ml-3'>
-
-              <p className="title is-size-4">Contact List</p>
-              {friends.length == 0 ? (
-                <p>No Friends just yet!</p>
-              ) : (
-                <div className="select">
-                  <select onChange={handleContactBook}>
-                    <option>Select a Friend (game)</option>
-                    {friends.map((friend, i) => (
-                      <option key={i}>{friend}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              <div className="box ml-3">
+                <p className="title is-size-4">Contact List</p>
+                {friends.length == 0 ? (
+                  <p>No Friends just yet!</p>
+                ) : (
+                  <div className="select">
+                    <select onChange={handleContactBook}>
+                      {!beat && <option>Select a Friend (game)</option>}
+                      {friends.map((friend, i) => (
+                        <option key={i}>{friend}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
           </aside>
-          <div
-            className="column hero is-flex is-fullheight-with-navbar"
-          >
+          <div className="column hero is-flex is-fullheight-with-navbar">
             <div className="p-4">
               <p className="title">Playground</p>
               {!resolved && chatState.length == 0 && (
-                <button className='button' onClick={startConversation}>Help {currentName} with an issue!</button>
+                <button className="button" onClick={startConversation}>
+                  Help {currentName} with an issue!
+                </button>
               )}
             </div>
 
@@ -360,7 +400,11 @@ export default function Home() {
                   <div className="control has-icons-left has-icons-right is-expanded">
                     <input
                       className={`input ${
-                        chatState.length > 0 && !aiLoading && inputText.trim() === "" ? "is-danger" : ""
+                        chatState.length > 0 &&
+                        !aiLoading &&
+                        inputText.trim() === ""
+                          ? "is-danger"
+                          : ""
                       }`}
                       type="text"
                       placeholder="How would you respond?"
@@ -395,9 +439,11 @@ export default function Home() {
                     </a>
                   </div>
                 </div>
-                {chatState.length > 0 && !aiLoading && inputText.trim().length === 0 && (
-                  <p className="help is-danger">Type out your solution!</p>
-                )}
+                {chatState.length > 0 &&
+                  !aiLoading &&
+                  inputText.trim().length === 0 && (
+                    <p className="help is-danger">Type out your solution!</p>
+                  )}
               </form>
             </div>
           </div>
