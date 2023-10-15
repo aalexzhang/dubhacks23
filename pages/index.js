@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
+import { characters } from "./api/characters";
 
 export default function Home() {
   const [aiLoading, setaiLoading] = useState(false);
@@ -11,11 +12,31 @@ export default function Home() {
   const [currentName, setCurrentName] = useState("");
   const [friends, setFriends] = useState([]);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState("");
+  const [resolved, setResolved] = useState(false);
+
 
   useEffect(() => {
-    setCurrentName("John");
     setCurrentScenarioIndex(0);
+    setCurrentName("Lily");
   }, []);
+
+  useEffect(() => {
+    setResolved(false)
+    setChatState([])
+    setInputText('')
+    setCurrentName(characters["characterProgression"][currentScenarioIndex])
+  }, [currentScenarioIndex]);
+
+  //On button press, change the input to some scenario and chatbot data
+  const handleFetchData = async (input) => {
+    try {
+      const data = await onSubmit(input);
+      console.log(data);
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const startConversation = async () => {
     setaiLoading(true);
@@ -44,10 +65,17 @@ export default function Home() {
       var dummyChatState = [...chatState, {"role": "user", "content": inputText.trim()}]
       setChatState(dummyChatState)
       console.log("chatState:" + chatState)
-      const data = await onSubmit(dummyChatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
-      console.log(data);
+      let data = await onSubmit(dummyChatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
+
+      if (data.includes("RESOLVED")) {
+        //data = data.replace("RESOLVED", "")
+        setFriends([...friends, currentName])
+        setResolved(true)
+      }
+
       dummyChatState = [...dummyChatState, {"role": "assistant", "content": data}]
       setChatState(dummyChatState)
+
     } catch (error) {
       console.error(error);
       alert(error.message);
@@ -89,6 +117,7 @@ export default function Home() {
               {
                 chatState.length == 0 && <button onClick={startConversation}>Start Conversation</button>
               }
+              {resolved && <button onClick={() => setCurrentScenarioIndex(currentScenarioIndex + 1)}>Next Conversation</button>}
             </div>
             <div
               className="p-4 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
