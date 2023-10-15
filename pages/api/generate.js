@@ -1,7 +1,7 @@
   import {circumstances, talking} from './circumstances'
   import {characters} from './characters'
 
-  const onSubmit = async (chatState, currentName, currentScenarioIndex, talk) => {
+  const onSubmit = async (chatState, currentName, currentScenarioIndex, talk, user="friend") => {
     try {
       let name = currentName;
       console.log(currentName)
@@ -21,11 +21,12 @@
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer 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",
+          //"Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         },
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           messages: [
-            {role: "system", content: `${circumstance} ${init} Your name (the assistant) is ${name}. You will display the following personality traits in your responses: ${personality}. Remember, never suggest solutions! `},
+            {role: "system", content: `${circumstance} ${init} Your name (the assistant) is ${name}. Refer to the user as "${user}". You will display the following personality traits in your responses: ${personality}. Remember, never suggest solutions! `},
             ...chatState // Include the user's input here
           ],
           max_tokens: 100,

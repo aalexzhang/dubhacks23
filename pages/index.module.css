@@ -67,9 +67,7 @@
 }
 
 .animated_element {
-  width: 400px;
-  position: relative;
-  animation: tilt-n-move-shaking 1s ease-in-out 1s;
+  animation: tilt-n-move-shaking infinite ease-in-out 1s;
   transform-origin: center;
 }
 

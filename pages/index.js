@@ -1,29 +1,38 @@
-import Head from "next/head";
+import Head from 'next/head'
 import { useState } from "react";
 import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
 import { characters } from "./api/characters";
-import Confetti from "react-confetti";
-import useWindowSize from "../hooks/util";
-import Image from 'next/image'
-import lily from '../public/lily.png'
-import john from '../public/john.png'
+import Image from "next/image";
+import lily from "../public/lily.png";
+import john from "../public/john.png";
 import styles from "./index.module.css";
-// import aurelio from '../public/aurelio.png'
-// import kai from '../public/kai.png'
-// import sakura from '../public/sakura.png'
-// import rajesh from '../public/rajesh.png'
-// import andres from '../public/andres.png'
-// import amina from '../public/amina.png'
-
+import aurelio from "../public/aurelio.png";
+import kai from "../public/kai.png";
+import sakura from "../public/sakura.png";
+import rajesh from "../public/rajesh.png";
+import andres from "../public/andres.png";
+import amina from "../public/amina.png";
+import logo from "../public/logo.png";
 
 export default function Home() {
-  const images = {"lily":lily, "john":john} //"aurelio":aurelio, "kai":kai, "sakura":sakura, "rajesh":rajesh, "andres":andres, "amina":amina}
+  const images = {
+    "lily": lily,
+    john: john,
+    aurelio: aurelio,
+    kai: kai,
+    amina: amina,
+    andres: andres,
+    sakura: sakura,
+    rajesh: rajesh,
+  };
   const [aiLoading, setaiLoading] = useState(false);
   const [inputText, setInputText] = useState("");
   const [chatState, setChatState] = useState([]);
   const [currentName, setCurrentName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [setup, setSetup] = useState(true);
   const [friends, setFriends] = useState([]);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [resolved, setResolved] = useState(false);
@@ -53,7 +62,8 @@ export default function Home() {
         dummyChatState,
         currentName,
         currentScenarioIndex,
-        talk
+        talk,
+        userName
       ); // Call onSubmit with the user's input
       console.log(data);
       dummyChatState = [
@@ -85,7 +95,8 @@ export default function Home() {
         dummyChatState,
         currentName,
         currentScenarioIndex,
-        talk
+        talk,
+        userName
       ); // Call onSubmit with the user's input
 
       if (data.includes("RESOLVED")) {
@@ -136,21 +147,26 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Sprouts!</title>
-        <link rel="icon" href="/dog.png" />
+        <title>Sprout!</title>
       </Head>
-
-      <main>
+      <main style={{ maxHeight: "100%", overflow: "hidden" }}>
         <div className={`modal ${resolved ? "is-active" : ""}`}>
-          <Confetti width={size.width} height={size.height} />
           <div className="modal-background"></div>
-          <div className="modal-content">
-            <div className="message">
-              <div className="message-body">
+          <div className="modal-card">
+            <div className="modal-card-head">
+              <p className="modal-card-title is-bold has-text-weight-semibold">
+                Problem Success! 🎉🎉🎉
+              </p>
+            </div>
+            <section className="modal-card-body">
+              <div className="content is-block">
+                <p>
                 Congrats! You solved {currentName}'s problem! You may now select
                 them on your contact book on the right and talk with them
+                </p>
+                <button className='button is-success is-pulled-right' onClick={() => setCurrentScenarioIndex((i) => i + 1)}>Close</button>
               </div>
-            </div>
+            </section>
           </div>
           <button
             className="modal-close is-large"
@@ -158,10 +174,103 @@ export default function Home() {
             onClick={() => setCurrentScenarioIndex((i) => i + 1)}
           ></button>
         </div>
-        <div className="columns">
-          <aside className="column hero is-2">
-            <div className="container p-2">
-              <p className="is-size-5 has-text-weight-bold">Contact List</p>
+        <div className={`modal ${setup ? "is-active" : ""}`}>
+          <div className="modal-background"></div>
+          <div className="modal-card">
+            <div className="modal-card-head">
+              <p className="modal-card-title is-bold has-text-weight-semibold">
+                Welcome to Sprout!
+              </p>
+            </div>
+            <section className="modal-card-body">
+              <div className="content is-block">
+                <p>
+                  Welcome to Sprout, a platform for kids to improve their social
+                  skills through puzzle-based roleplays!
+                </p>
+                <p>Start by helping Lily 🪷 with her issue!</p>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSetup(false);
+                  }}
+                >
+                  <label className="label">Enter your name:</label>
+                  <div className="field has-addons">
+                    <div className="control has-icons-left has-icons-right is-expanded">
+                      <input
+                        className={`input ${
+                          userName !== "" ? "is-success" : "is-danger"
+                        }`}
+                        type="text"
+                        placeholder="Enter your name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value.trim())}
+                        required
+                      />
+                      <span className="icon is-small is-left">
+                        <i className="fas fa-user"></i>
+                      </span>
+                      <span className="icon is-small is-right">
+                        <i
+                          className={`fas ${
+                            userName !== "" ? "fa-check" : "fa-xmark"
+                          }`}
+                        ></i>
+                      </span>
+                    </div>
+                    <div className="control">
+                      <a
+                        className="button is-success"
+                        onClick={() => setSetup(false)}
+                        disabled={userName === ""}
+                      >
+                        Submit Name
+                      </a>
+                    </div>
+                  </div>
+                  {userName === "" && (
+                    <p className="help is-danger">This username is available</p>
+                  )}
+                </form>
+              </div>
+            </section>
+          </div>
+          <button
+            className="modal-close is-large"
+            aria-label="close"
+            onClick={() => setSetup(false)}
+            disabled={userName === ""}
+          ></button>
+        </div>
+        <nav className="navbar has-shadow">
+          <div className="navbar-brand p-2">
+            <a
+              className="p-1"
+              href="/"
+              style={{ position: "relative", height: "50px", width: "180px" }}
+            >
+              <Image
+                src={logo}
+                alt="logo"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            </a>
+          </div>
+          <div className="navbar-menu"></div>
+          <div className="navbar-end"></div>
+        </nav>
+        <div
+          className="columns"
+          style={{ maxHeight: "100%", overflow: "hidden" }}
+        >
+          <aside className="column hero is-narrow" style={{backgroundColor: "#F9F9F9", borderRight: "1px solid #DEDEDE", width: 'auto'}}>
+            <div className="container pt-4">
+              <div className='box ml-3'>
+
+              <p className="title is-size-4">Contact List</p>
               {friends.length == 0 ? (
                 <p>No Friends just yet!</p>
               ) : (
@@ -174,28 +283,38 @@ export default function Home() {
                   </select>
                 </div>
               )}
+              </div>
             </div>
           </aside>
-          <div className="column hero is-fullheight is-flex">
+          <div
+            className="column hero is-flex is-fullheight-with-navbar"
+          >
             <div className="p-4">
               <p className="title">Playground</p>
-              <p className="subtitle">Playground area</p>
               {!resolved && chatState.length == 0 && (
-                <button onClick={startConversation}>Start Conversation</button>
+                <button className='button' onClick={startConversation}>Help {currentName} with an issue!</button>
               )}
             </div>
 
-
-            <div className="container">
-              <Image src={images[currentName.toLowerCase()]} className={styles.animated_element}/>
+            <div
+              className="container"
+              style={{ width: "100%", height: "auto", position: "relative" }}
+            >
+              <Image
+                src={images[currentName.toLowerCase()]}
+                alt={currentName}
+                className={aiLoading ? styles.animated_element : ""}
+                fill
+                sizes="100vw"
+                style={{ objectFit: "contain" }}
+              />
             </div>
 
-
             <div
-              className="p-4 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
-              style={{ maxHeight: "400px" }}
+              className="box p-4 mr-3 mb-2 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
+              style={{ maxHeight: "400px", overflow: "hidden" }}
             >
-              <p className="title">Chat</p>
+              <p className="title mb-1">Chat</p>
               <div
                 className="p-2"
                 style={{
@@ -236,12 +355,12 @@ export default function Home() {
                     })}
                 </div>
               </div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="mt-3">
                 <div className="field has-addons">
-                  <div className="control is-expanded">
+                  <div className="control has-icons-left has-icons-right is-expanded">
                     <input
                       className={`input ${
-                        inputText.trim() === "" ? "is-danger" : ""
+                        chatState.length > 0 && !aiLoading && inputText.trim() === "" ? "is-danger" : ""
                       }`}
                       type="text"
                       placeholder="How would you respond?"
@@ -249,6 +368,18 @@ export default function Home() {
                       onChange={(e) => setInputText(e.target.value)}
                       disabled={chatState.length === 0 || aiLoading || resolved}
                     />
+                    <span className="icon is-small is-left">
+                      <i className="fas fa-child"></i>
+                    </span>
+                    <span className="icon is-small is-right">
+                      <i
+                        className={`fas ${
+                          inputText.trim().length !== 0
+                            ? "fa-check"
+                            : "fa-xmark"
+                        }`}
+                      ></i>
+                    </span>
                   </div>
                   <div className="control">
                     <a
@@ -264,7 +395,7 @@ export default function Home() {
                     </a>
                   </div>
                 </div>
-                {inputText.trim().length === 0 && (
+                {chatState.length > 0 && !aiLoading && inputText.trim().length === 0 && (
                   <p className="help is-danger">Type out your solution!</p>
                 )}
               </form>
