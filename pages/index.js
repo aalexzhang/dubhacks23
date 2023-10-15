@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
+import therapist from "./api/therapist";
 import { characters } from "./api/characters";
 import Image from "next/image";
 import lily from "../public/lily.png";
@@ -38,6 +39,7 @@ export default function Home() {
   const [resolved, setResolved] = useState(false);
   const [talk, setTalk] = useState(false);
   const [beat, setBeat] = useState(false);
+  const [advice, setAdvice] = useState('');
 
   useEffect(() => {
     setCurrentScenarioIndex(0);
@@ -49,6 +51,7 @@ export default function Home() {
     setChatState((state) => []);
     setInputText("");
     setCurrentName(characters["characterProgression"][currentScenarioIndex]);
+    setAdvice('');
   }, [currentScenarioIndex]);
 
   const startConversation = async () => {
@@ -100,10 +103,12 @@ export default function Home() {
         userName
       ); // Call onSubmit with the user's input
 
-      if (data.includes("RESOLVED")) {
+      if (data.includes("RESOLVED") && !talk) {
         data = data.replace("RESOLVED", "");
         setFriends([...friends, currentName]);
         setResolved(true);
+        let therapy = await therapist(chatState);
+        setAdvice(therapy);
       }
 
       dummyChatState = [
@@ -126,6 +131,7 @@ export default function Home() {
     setResolved(false);
     setChatState((state) => []);
     setInputText("");
+    setAdvice('');
   };
 
   const nextLevel = () => {
@@ -193,6 +199,8 @@ export default function Home() {
                     them
                   </p>
                 )}
+                <h4>Social Advice</h4>
+                <p>{advice}</p>
                 <button
                   className="button is-success is-pulled-right"
                   onClick={() => nextLevel()}
