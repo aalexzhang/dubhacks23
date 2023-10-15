@@ -1,6 +1,3 @@
-require('dotenv').config();
-console.log(process.env.OPENAI_API_KEY);
-
 import Head from "next/head";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -8,31 +5,37 @@ import styles from "./index.module.css";
 import onSubmit from "./api/generate";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
+  const [chatState, setChatState] = useState([]);
+  const [currentName, setCurrentName] = useState("");
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState("");
 
-  //On page load
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await onSubmit(""); // Call onSubmit with an empty string (initial load)
-        console.log(data);
-        setResult(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
+    setChatState([...chatState, {"role": "user", "content": "Hello."}, {"role": "assistant", "content": "Hello."},  {"role": "user", "content": "What is your name?"}]);
+    setCurrentName("John");
+    setCurrentScenarioIndex(0);
   }, []);
 
+  //On button press, change the input to some scenario and chatbot data
+  const handleFetchData = async (input) => {
+    try {
+      const data = await onSubmit(input);
+      console.log(data);
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const data = await onSubmit(animalInput); // Call onSubmit with animalInput
+      console.log("asdf")
+      const data = await onSubmit(chatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
       console.log(data);
       setResult(data);
-      setAnimalInput("");
+
     } catch (error) {
       console.error(error);
       alert(error.message);
@@ -49,13 +52,13 @@ export default function Home() {
       <main className={styles.main}>
         <img src="/dog.png" className={styles.icon} />
         <h3>Name my pet</h3>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
             name="animal"
             placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+            value={chatState}
+            onChange={(e) => setChatState(e.target.value)}
           />
           <input type="submit" value="Generate names" />
         </form>
