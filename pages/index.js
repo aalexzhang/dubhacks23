@@ -4,16 +4,19 @@ import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
 import { characters } from "./api/characters";
+import Confetti from "react-confetti";
 
 export default function Home() {
   const [aiLoading, setaiLoading] = useState(false);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [chatState, setChatState] = useState([]);
   const [currentName, setCurrentName] = useState("");
   const [friends, setFriends] = useState([]);
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState("");
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [resolved, setResolved] = useState(false);
+  const [talk, setTalk] = useState(false);
 
+  const size = useWindowSize();
 
   useEffect(() => {
     setCurrentScenarioIndex(0);
@@ -21,67 +24,101 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    setResolved(false)
-    setChatState([])
-    setInputText('')
-    setCurrentName(characters["characterProgression"][currentScenarioIndex])
+    setResolved(false);
+    setChatState((state) => []);
+    setInputText("");
+    setCurrentName(characters["characterProgression"][currentScenarioIndex]);
   }, [currentScenarioIndex]);
 
-  //On button press, change the input to some scenario and chatbot data
-  const handleFetchData = async (input) => {
-    try {
-      const data = await onSubmit(input);
-      console.log(data);
-      setResult(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const startConversation = async () => {
+    setChatState([]);
     setaiLoading(true);
     try {
-      var dummyChatState = [...chatState, {"role": "user", "content": ''}]
-      setChatState(dummyChatState)
-      console.log("chatState:" + chatState)
-      const data = await onSubmit(dummyChatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
+      var dummyChatState = [...chatState, { role: "user", content: "" }];
+      setChatState(dummyChatState);
+      console.log("chatState:" + chatState);
+      const data = await onSubmit(
+        dummyChatState,
+        currentName,
+        currentScenarioIndex,
+        talk
+      ); // Call onSubmit with the user's input
       console.log(data);
-      dummyChatState = [...dummyChatState, {"role": "assistant", "content": data}]
-      setChatState(dummyChatState)
+      dummyChatState = [
+        ...dummyChatState,
+        { role: "assistant", content: data },
+      ];
+      setChatState(dummyChatState);
     } catch (error) {
       console.error(error);
       alert(error.message);
     }
     setaiLoading(false);
-  }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (inputText.trim() === '') {
-      return
+    if (inputText.trim() === "") {
+      return;
     }
     setaiLoading(true);
     try {
-      var dummyChatState = [...chatState, {"role": "user", "content": inputText.trim()}]
-      setChatState(dummyChatState)
-      console.log("chatState:" + chatState)
-      let data = await onSubmit(dummyChatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
+      var dummyChatState = [
+        ...chatState,
+        { role: "user", content: inputText.trim() },
+      ];
+      setChatState(dummyChatState);
+      console.log("chatState:" + chatState);
+      let data = await onSubmit(
+        dummyChatState,
+        currentName,
+        currentScenarioIndex,
+        talk
+      ); // Call onSubmit with the user's input
 
       if (data.includes("RESOLVED")) {
-        //data = data.replace("RESOLVED", "")
-        setFriends([...friends, currentName])
-        setResolved(true)
+        data = data.replace("RESOLVED", "");
+        setFriends([...friends, currentName]);
+        setResolved(true);
       }
 
-      dummyChatState = [...dummyChatState, {"role": "assistant", "content": data}]
-      setChatState(dummyChatState)
-
+      dummyChatState = [
+        ...dummyChatState,
+        { role: "assistant", content: data },
+      ];
+      setChatState(dummyChatState);
     } catch (error) {
       console.error(error);
       alert(error.message);
     }
-    setInputText('');
+    setInputText("");
     setaiLoading(false);
+  };
+
+  useEffect(() => {
+    const start = async () => {
+      if (talk && currentName !== "" && chatState.length == 0 && !resolved) {
+        await startConversation();
+      }
+    };
+    start();
+  }, [talk]);
+
+  const handleContactBook = async (e) => {
+    const friend = e.target.value;
+    if (characters["characterProgression"].includes(friend)) {
+      console.log("ENTERING TALK MODE");
+      setCurrentName(friend);
+      setTalk(true);
+      setChatState((chatState) => []);
+      setInputText("");
+    } else {
+      console.log("NO TALKING");
+      setTalk(false);
+      setChatState((state) => []);
+      setInputText("");
+      setCurrentName(characters["characterProgression"][currentScenarioIndex]);
+    }
   };
 
   return (
@@ -92,6 +129,22 @@ export default function Home() {
       </Head>
 
       <main>
+        <div className={`modal ${resolved ? "is-active" : ""}`}>
+          <div className="modal-background"></div>
+          <div className="modal-content">
+            <div className="message">
+              <div className="message-body">
+                Congrats! You solved {currentName}'s problem! You may now select
+                them on your contact book on the right and talk with them
+              </div>
+            </div>
+          </div>
+          <button
+            className="modal-close is-large"
+            aria-label="close"
+            onClick={() => setCurrentScenarioIndex((i) => i + 1)}
+          ></button>
+        </div>
         <div className="columns">
           <aside className="column hero is-2">
             <div className="container p-2">
@@ -100,8 +153,8 @@ export default function Home() {
                 <p>No Friends just yet!</p>
               ) : (
                 <div className="select">
-                  <select>
-                    <option>Select a Friend</option>
+                  <select onChange={handleContactBook}>
+                    <option>Select a Friend (game)</option>
                     {friends.map((friend, i) => (
                       <option key={i}>{friend}</option>
                     ))}
@@ -114,66 +167,86 @@ export default function Home() {
             <div className="p-4">
               <p className="title">Playground</p>
               <p className="subtitle">Playground area</p>
-              {
-                chatState.length == 0 && <button onClick={startConversation}>Start Conversation</button>
-              }
-              {resolved && <button onClick={() => setCurrentScenarioIndex(currentScenarioIndex + 1)}>Next Conversation</button>}
+              {!resolved && chatState.length == 0 && (
+                <button onClick={startConversation}>Start Conversation</button>
+              )}
             </div>
             <div
               className="p-4 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
               style={{ height: "400px" }}
             >
               <p className="title">Chat</p>
-              <div className="p-2" style={{maxHeight: "500px", overflow: "auto", display: "flex", flexDirection: 'column-reverse'}}>
+              <div
+                className="p-2"
+                style={{
+                  maxHeight: "500px",
+                  overflow: "auto",
+                  display: "flex",
+                  flexDirection: "column-reverse",
+                }}
+              >
                 <div>
-                {chatState.filter((m) => m.content !== '').map((m, i) => {
-                  const msgClass = m.role === "assistant"; // for demo purposes, format every other msg
-                  return (
-                    <p
-                      style={{
-                        textAlign: msgClass ? "left" : "right",
-                        height: 'auto'
-                      }}
-                    >
-                      <span
-                        key={i}
-                        className={`tag is-medium p-2 ${
-                          msgClass ? "is-success" : "is-info"
-                        }`}
-                        style={{
-                          maxWidth: '500px',
-                          whiteSpace: 'pre-wrap', 
-                          overflowWrap: 'break-word',
-                          height: 'auto'
-                        }}
-                      >
-                        {m.content}
-                      </span>
-                    </p>
-                  );
-                })}
+                  {chatState
+                    .filter((m) => m.content !== "")
+                    .map((m, i) => {
+                      const msgClass = m.role === "assistant"; // for demo purposes, format every other msg
+                      return (
+                        <p
+                          style={{
+                            textAlign: msgClass ? "left" : "right",
+                            height: "auto",
+                          }}
+                        >
+                          <span
+                            key={i}
+                            className={`tag is-medium p-2 ${
+                              msgClass ? "is-success" : "is-info"
+                            }`}
+                            style={{
+                              maxWidth: "500px",
+                              whiteSpace: "pre-wrap",
+                              overflowWrap: "break-word",
+                              height: "auto",
+                            }}
+                          >
+                            {m.content}
+                          </span>
+                        </p>
+                      );
+                    })}
                 </div>
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="field has-addons">
                   <div className="control is-expanded">
                     <input
-                      className={`input ${inputText.trim() === '' ? 'is-danger': ''}`}
+                      className={`input ${
+                        inputText.trim() === "" ? "is-danger" : ""
+                      }`}
                       type="text"
                       placeholder="How would you respond?"
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
-                      disabled={chatState.length === 0 || aiLoading}
+                      disabled={chatState.length === 0 || aiLoading || resolved}
                     />
                   </div>
                   <div className="control">
-                    <a className="button is-success" onClick={handleSubmit} disabled={chatState.length === 0 || aiLoading || inputText.trim().length === 0}>Submit</a>
+                    <a
+                      className="button is-success"
+                      onClick={handleSubmit}
+                      disabled={
+                        chatState.length === 0 ||
+                        aiLoading ||
+                        inputText.trim().length === 0
+                      }
+                    >
+                      Submit
+                    </a>
                   </div>
                 </div>
-                {
-                    inputText.trim().length === 0 &&
-                    <p className="help is-danger">Type out your solution!</p>
-                  }
+                {inputText.trim().length === 0 && (
+                  <p className="help is-danger">Type out your solution!</p>
+                )}
               </form>
             </div>
           </div>

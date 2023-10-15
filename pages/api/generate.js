@@ -1,12 +1,19 @@
-  import {circumstances} from './circumstances'
+  import {circumstances, talking} from './circumstances'
   import {characters} from './characters'
 
-  const onSubmit = async (chatState, currentName, currentScenarioIndex) => {
+  const onSubmit = async (chatState, currentName, currentScenarioIndex, talk) => {
     try {
       let name = currentName;
       console.log(currentName)
       let personality = characters[currentName]["personality"];
-      let circumstance = circumstances["circumstances"][currentScenarioIndex]["description"];
+      if (talk) {
+        var circumstance = talking["circumstances"][0]["description"]
+        var init = talking["init"]
+      } else {
+        var circumstance = circumstances["circumstances"][currentScenarioIndex]["description"];
+        var init = circumstances["init"]
+      }
+      console.log("ARE WE TALKING " + talk)
 
 
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -18,7 +25,7 @@
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           messages: [
-            {role: "system", content: `${circumstance} ${circumstances["init"]} Your name (the assistant) is ${name}. You will display the following personality traits in your responses: ${personality}. Remember, never suggest solutions! `},
+            {role: "system", content: `${circumstance} ${init} Your name (the assistant) is ${name}. You will display the following personality traits in your responses: ${personality}. Remember, never suggest solutions! `},
             ...chatState // Include the user's input here
           ],
           max_tokens: 100,
