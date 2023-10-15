@@ -1,14 +1,46 @@
 import Head from "next/head";
 import { useState } from "react";
-import "bulma/css/bulma.min.css";
-import { characters } from "./api/characters";
+import { useEffect } from "react";
+import styles from "./index.module.css";
+import onSubmit from "./api/generate";
 
 export default function Home() {
-  const chars = Object.keys(characters).map((key) => characters[key]);
+  const [result, setResult] = useState();
+  const [chatState, setChatState] = useState([]);
+  const [currentName, setCurrentName] = useState("");
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState("");
 
-  const [friends, setFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(chars[0].name);
-  const [messages, setMessages] = useState(['Hello', 'Whats up', 'YOOOO']);
+
+  useEffect(() => {
+    setChatState([...chatState, {"role": "user", "content": "Hello."}, {"role": "assistant", "content": "Hello."},  {"role": "user", "content": "What is your name?"}]);
+    setCurrentName("John");
+    setCurrentScenarioIndex(0);
+  }, []);
+
+  //On button press, change the input to some scenario and chatbot data
+  const handleFetchData = async (input) => {
+    try {
+      const data = await onSubmit(input);
+      console.log(data);
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      console.log("asdf")
+      const data = await onSubmit(chatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
+      console.log(data);
+      setResult(data);
+
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
 
   return (
     <div>
