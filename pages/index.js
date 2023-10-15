@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
+import therapist from "./api/therapist";
 import { characters } from "./api/characters";
 import Image from "next/image";
 import lily from "../public/lily.png";
@@ -15,6 +16,7 @@ import rajesh from "../public/rajesh.png";
 import andres from "../public/andres.png";
 import amina from "../public/amina.png";
 import logo from "../public/logo.png";
+import loading from "../public/loading.gif"
 
 export default function Home() {
   const images = {
@@ -38,6 +40,7 @@ export default function Home() {
   const [resolved, setResolved] = useState(false);
   const [talk, setTalk] = useState(false);
   const [beat, setBeat] = useState(false);
+  const [advice, setAdvice] = useState('');
 
   useEffect(() => {
     setCurrentScenarioIndex(0);
@@ -49,6 +52,7 @@ export default function Home() {
     setChatState((state) => []);
     setInputText("");
     setCurrentName(characters["characterProgression"][currentScenarioIndex]);
+    setAdvice('');
   }, [currentScenarioIndex]);
 
   const startConversation = async () => {
@@ -104,6 +108,8 @@ export default function Home() {
         data = data.replace("RESOLVED", "");
         setFriends([...friends, currentName]);
         setResolved(true);
+        let therapy = await therapist(chatState);
+        setAdvice(therapy);
       }
 
       dummyChatState = [
@@ -126,6 +132,7 @@ export default function Home() {
     setResolved(false);
     setChatState((state) => []);
     setInputText("");
+    setAdvice('');
   };
 
   const nextLevel = () => {
@@ -193,6 +200,8 @@ export default function Home() {
                     them
                   </p>
                 )}
+                <h4>Social Advice</h4>
+                {aiLoading ? <Image src={loading} width={100}/> : <p>{advice}</p>}
                 <button
                   className="button is-success is-pulled-right"
                   onClick={() => nextLevel()}
