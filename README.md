@@ -1,44 +1,27 @@
-# OpenAI API Quickstart - Node.js example app
+# [Sprout!](https://sprout-opal.vercel.app/) - Teaching Social Skills through Interactive Scenarios
 
-This is an example pet name generator app used in the OpenAI API [quickstart tutorial](https://platform.openai.com/docs/quickstart). It uses the [Next.js](https://nextjs.org/) framework with [React](https://reactjs.org/). Check out the tutorial or follow the instructions below to get set up.
+## Overview
 
-![Text box that says name my pet with an icon of a dog](https://user-images.githubusercontent.com/10623307/213887080-b2bc4645-7fdb-4dbd-ae42-efce00d0dc29.png)
+Sprout! is a website aimed at addressing the issue of children experiencing challenges in social interaction due to the COVID-19 pandemic. With the disruption of in-person classes and limited social interactions, children may face difficulties developing essential social skills. Sprout! provides an interactive platform that helps children develop and improve their social skills through engaging scenarios and activities. Check out Sprout! at this [webpage](https://sprout-opal.vercel.app/).
 
+## Features
 
-## Setup
+### Interactive Scenarios
+- Sprout! utilizes GPT-3.5-turbo to offer a range of interactive scenarios that simulate real-life social situations.
+- Children can explore different scenarios and practice making choices, expressing emotions, and navigating social interactions.
 
-1. If you don’t have Node.js installed, [install it from here](https://nodejs.org/en/) (Node.js version >= 14.6.0 required)
+### Skill-Building Exercises
+- The platform provides skill-building exercises designed to enhance communication, empathy, conflict resolution, and teamwork.
+- Children can learn and practice these skills in a safe and controlled virtual environment.
 
-2. Clone this repository
+### Child-Friendly Interface
+- The website is designed with a child-friendly interface, making it engaging and easy to navigate for young users.
+- Individual avatars, interactive elements, and age-appropriate content ensure an enjoyable learning experience.
 
-3. Navigate into the project directory
+## License
 
-   ```bash
-   $ cd openai-quickstart-node
-   ```
+Sprout! is licensed under the [MIT License](LICENSE).
 
-4. Install the requirements
+---
 
-   ```bash
-   $ npm install
-   ```
-
-5. Make a copy of the example environment variables file
-
-   On Linux systems: 
-   ```bash
-   $ cp .env.example .env
-   ```
-   On Windows:
-   ```powershell
-   $ copy .env.example .env
-   ```
-6. Add your [API key](https://platform.openai.com/account/api-keys) to the newly created `.env` file
-
-7. Run the app
-
-   ```bash
-   $ npm run dev
-   ```
-
-You should now be able to access the app at [http://localhost:3000](http://localhost:3000)! For the full context behind this example app, check out the [tutorial](https://platform.openai.com/docs/quickstart).
+Thank you for using Sprout! and helping children develop essential social skills for a brighter future!

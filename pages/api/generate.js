@@ -20,8 +20,7 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer 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",
-          // "Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+          "Authorization": "Bearer " + process.env.AI_KEY,
         },
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
