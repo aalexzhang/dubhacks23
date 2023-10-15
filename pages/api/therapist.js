@@ -4,13 +4,13 @@ const therapist = async (chatState) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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",
+        "Authorization": "Bearer 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",
         // "Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_API_KEY,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
         messages: [
-          {role: "system", content: `Act as a behavioral therapist analyzing the chat log. Explain in the terms of a 7 year old, how the user could improve their social skills. Use the 2nd person perspective. Answer in at most 3 sentences.`},
+          {role: "system", content: `Act as a behavioral therapist analyzing this chat log. The user has been given a scenario by the assistant, and has been tasked with helping to solve it. Give some positive and constructive feedback on how the user could improve socially. Remember that the user is also a 7 year old. Use the 2nd person perspective. Answer in at most 3 sentences.`},
           ...chatState // Include the user's input here
         ],
         max_tokens: 100,

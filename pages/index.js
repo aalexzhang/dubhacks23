@@ -16,6 +16,7 @@ import rajesh from "../public/rajesh.png";
 import andres from "../public/andres.png";
 import amina from "../public/amina.png";
 import logo from "../public/logo.png";
+import loading from "../public/loading.gif"
 
 export default function Home() {
   const images = {
@@ -200,7 +201,7 @@ export default function Home() {
                   </p>
                 )}
                 <h4>Social Advice</h4>
-                <p>{advice}</p>
+                {aiLoading ? <Image src={loading} width={100}/> : <p>{advice}</p>}
                 <button
                   className="button is-success is-pulled-right"
                   onClick={() => nextLevel()}

@@ -20,7 +20,7 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer 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",
+          "Authorization": "Bearer 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",
           // "Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         },
         body: JSON.stringify({
