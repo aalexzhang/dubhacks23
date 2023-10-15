@@ -80,6 +80,7 @@ export default function Home() {
       console.error(error);
       alert(error.message);
     }
+    setInputText('');
     setaiLoading(false);
   };
 
@@ -113,7 +114,9 @@ export default function Home() {
             <div className="p-4">
               <p className="title">Playground</p>
               <p className="subtitle">Playground area</p>
-              <button onClick={startConversation}>Start Conversation</button>
+              {
+                chatState.length == 0 && <button onClick={startConversation}>Start Conversation</button>
+              }
               {resolved && <button>Next Conversation</button>}
             </div>
             <div
@@ -121,29 +124,35 @@ export default function Home() {
               style={{ height: "400px" }}
             >
               <p className="title">Chat</p>
-              <div className="p-2">
+              <div className="p-2" style={{maxHeight: "500px", overflow: "auto", display: "flex", flexDirection: 'column-reverse'}}>
+                <div>
                 {chatState.filter((m) => m.content !== '').map((m, i) => {
                   const msgClass = m.role === "assistant"; // for demo purposes, format every other msg
                   return (
                     <p
                       style={{
-                        padding: ".25em",
                         textAlign: msgClass ? "left" : "right",
-                        overflowWrap: "normal",
-                        maxWidth: "100px"
+                        height: 'auto'
                       }}
                     >
                       <span
                         key={i}
-                        className={`tag is-medium ${
+                        className={`tag is-medium p-2 ${
                           msgClass ? "is-success" : "is-info"
                         }`}
+                        style={{
+                          maxWidth: '500px',
+                          whiteSpace: 'pre-wrap', 
+                          overflowWrap: 'break-word',
+                          height: 'auto'
+                        }}
                       >
                         {m.content}
                       </span>
                     </p>
                   );
                 })}
+                </div>
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="field has-addons">
