@@ -1,6 +1,3 @@
-require('dotenv').config();
-console.log(process.env.OPENAI_API_KEY);
-
 import Head from "next/head";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -15,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await onSubmit(""); // Call onSubmit with an empty string (initial load)
+        const data = await onSubmit("");
         console.log(data);
         setResult(data);
       } catch (error) {
@@ -29,7 +26,7 @@ export default function Home() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const data = await onSubmit(animalInput); // Call onSubmit with animalInput
+      const data = await onSubmit(animalInput);
       console.log(data);
       setResult(data);
       setAnimalInput("");
@@ -49,7 +46,7 @@ export default function Home() {
       <main className={styles.main}>
         <img src="/dog.png" className={styles.icon} />
         <h3>Name my pet</h3>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
             name="animal"
