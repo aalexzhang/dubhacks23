@@ -1,4 +1,4 @@
-# Sprout! - Teaching Social Skills through Interactive Scenarios
+# [Sprout!](https://sprout-opal.vercel.app/) - Teaching Social Skills through Interactive Scenarios
 
 ## Overview
 
