@@ -117,7 +117,7 @@ export default function Home() {
               {
                 chatState.length == 0 && <button onClick={startConversation}>Start Conversation</button>
               }
-              {resolved && <button>Next Conversation</button>}
+              {resolved && <button onClick={() => setCurrentScenarioIndex(currentScenarioIndex + 1)}>Next Conversation</button>}
             </div>
             <div
               className="p-4 is-justify-content-flex-end is-flex is-flex-direction-column is-small"
