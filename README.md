@@ -7,12 +7,12 @@ Sprout! is a website aimed at addressing the issue of children experiencing chal
 ## Features
 
 ### Interactive Scenarios
-- Sprout! offers a range of interactive scenarios that simulate real-life social situations.
+- Sprout! utilizes GPT-3.5-turbo to offer a range of interactive scenarios that simulate real-life social situations.
 - Children can explore different scenarios and practice making choices, expressing emotions, and navigating social interactions.
 
 ### Skill-Building Exercises
 - The platform provides skill-building exercises designed to enhance communication, empathy, conflict resolution, and teamwork.
-- Children can learn and practice these skills with the help of GPT-3.5-turbo in a safe and controlled virtual environment.
+- Children can learn and practice these skills in a safe and controlled virtual environment.
 
 ### Child-Friendly Interface
 - The website is designed with a child-friendly interface, making it engaging and easy to navigate for young users.
