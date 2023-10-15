@@ -5,6 +5,7 @@ import "bulma/css/bulma.min.css";
 import onSubmit from "./api/generate";
 import { characters } from "./api/characters";
 import Confetti from "react-confetti";
+import useWindowSize from "../hooks/util";
 
 export default function Home() {
   const [aiLoading, setaiLoading] = useState(false);
@@ -130,6 +131,7 @@ export default function Home() {
 
       <main>
         <div className={`modal ${resolved ? "is-active" : ""}`}>
+          <Confetti width={size.width} height={size.height} />
           <div className="modal-background"></div>
           <div className="modal-content">
             <div className="message">
