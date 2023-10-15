@@ -1,4 +1,4 @@
-const characters = {
+export const characters = {
     'Lily': {
         'name': "Lily",
         'personality' : "Sassy, slightly rude, annoying, resistant, stubborn",
