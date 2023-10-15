@@ -1,35 +1,43 @@
+require('dotenv').config();
+console.log(process.env.OPENAI_API_KEY);
+
 import Head from "next/head";
 import { useState } from "react";
+import { useEffect } from "react";
 import styles from "./index.module.css";
+import onSubmit from "./api/generate";
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
 
-  async function onSubmit(event) {
+  //On page load
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await onSubmit(""); // Call onSubmit with an empty string (initial load)
+        console.log(data);
+        setResult(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ animal: animalInput }),
-      });
-
-      const data = await response.json();
-      if (response.status !== 200) {
-        throw data.error || new Error(`Request failed with status ${response.status}`);
-      }
-
-      setResult(data.result);
+      const data = await onSubmit(animalInput); // Call onSubmit with animalInput
+      console.log(data);
+      setResult(data);
       setAnimalInput("");
-    } catch(error) {
-      // Consider implementing your own error handling logic here
+    } catch (error) {
       console.error(error);
       alert(error.message);
     }
-  }
+  };
 
   return (
     <div>
