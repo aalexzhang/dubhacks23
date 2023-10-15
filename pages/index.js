@@ -100,7 +100,7 @@ export default function Home() {
         userName
       ); // Call onSubmit with the user's input
 
-      if (data.includes("RESOLVED")) {
+      if (data.includes("RESOLVED") && !talk) {
         data = data.replace("RESOLVED", "");
         setFriends([...friends, currentName]);
         setResolved(true);
