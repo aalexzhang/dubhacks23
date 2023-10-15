@@ -5,31 +5,37 @@ import styles from "./index.module.css";
 import onSubmit from "./api/generate";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
+  const [chatState, setChatState] = useState([]);
+  const [currentName, setCurrentName] = useState("");
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState("");
 
-  //On page load
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await onSubmit("");
-        console.log(data);
-        setResult(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
+    setChatState([...chatState, {"role": "user", "content": "Hello."}, {"role": "assistant", "content": "Hello."},  {"role": "user", "content": "What is your name?"}]);
+    setCurrentName("John");
+    setCurrentScenarioIndex(0);
   }, []);
 
+  //On button press, change the input to some scenario and chatbot data
+  const handleFetchData = async (input) => {
+    try {
+      const data = await onSubmit(input);
+      console.log(data);
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const data = await onSubmit(animalInput);
+      console.log("asdf")
+      const data = await onSubmit(chatState, currentName, currentScenarioIndex); // Call onSubmit with the user's input
       console.log(data);
       setResult(data);
-      setAnimalInput("");
+
     } catch (error) {
       console.error(error);
       alert(error.message);
@@ -51,8 +57,8 @@ export default function Home() {
             type="text"
             name="animal"
             placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+            value={chatState}
+            onChange={(e) => setChatState(e.target.value)}
           />
           <input type="submit" value="Generate names" />
         </form>
